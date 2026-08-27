@@ -1,0 +1,16 @@
+DEFINE VIEW {{db}}.STG.V_JOBS_CURRENT(
+    JOB_ID,
+    JOB_TITLE,
+    JOB_FAMILY,
+    JOB_LEVEL,
+    EXEMPT_FLAG,
+    GRADE_BAND,
+    FTE_STANDARD_HOURS,
+    VALID_FROM,
+    VALID_TO,
+    IS_CURRENT,
+    SRC_UPDATED_AT,
+    LOAD_TS
+) as
+select * from {{db}}.STG.V_JOBS_HISTORY
+where IS_CURRENT = true;

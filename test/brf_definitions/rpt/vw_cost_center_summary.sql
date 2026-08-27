@@ -1,0 +1,23 @@
+DEFINE VIEW {{db}}.RPT.VW_COST_CENTER_SUMMARY(
+    COST_CENTER_NAME,
+    DIVISION,
+    BUDGET_OWNER,
+    TOTAL_BUDGET,
+    TOTAL_ACTUAL,
+    OVER_UNDER_BUDGET
+) as
+select
+    cc.COST_CENTER_NAME,
+    cc.DIVISION,
+    cc.BUDGET_OWNER,
+    sum(bv.BUDGET_AMOUNT) as TOTAL_BUDGET,
+    sum(bv.ACTUAL_AMOUNT) as TOTAL_ACTUAL,
+    case
+        when sum(bv.VARIANCE_AMOUNT) > 0 then 'OVER'
+        when sum(bv.VARIANCE_AMOUNT) < 0 then 'UNDER'
+        else 'ON_BUDGET'
+    end as OVER_UNDER_BUDGET
+from {{db}}.DM.F_BUDGET_VARIANCE bv
+join {{db}}.DM.D_COST_CENTER cc on bv.COST_CENTER_KEY = cc.COST_CENTER_KEY
+group by cc.COST_CENTER_NAME, cc.DIVISION, cc.BUDGET_OWNER
+order by cc.DIVISION, cc.COST_CENTER_NAME;

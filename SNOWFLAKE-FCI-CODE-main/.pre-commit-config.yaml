@@ -1,0 +1,15 @@
+repos:
+  - repo: local
+    hooks:
+      - id: sqlfluff-lint
+        name: sqlfluff-lint
+        language: script
+        entry: scripts/dcm-sqlfluff-lint.sh
+        files: \.sql$
+        types: [file]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [-c, .yamllint.yml]

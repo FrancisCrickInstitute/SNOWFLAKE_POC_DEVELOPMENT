@@ -1,0 +1,31 @@
+manifest_version: 2
+
+type: DCM_PROJECT
+
+default_target: DEV
+
+targets:
+  DEV:
+    account_identifier: SFPSCOGS-FCRICKDEMO
+    project_name: DEV_BRF_CORE_DB.DCM.BRF_CORE_PROJECT
+    project_owner: DEV_BRF_ETL
+    templating_config: DEV
+
+  PROD:
+    account_identifier: sfpscogs-azure_demo_3
+    project_name: PROD_BRF_CORE_DB.DCM.BRF_CORE_PROJECT
+    project_owner: PROD_BRF_ETL
+    templating_config: PROD
+
+templating:
+  defaults:
+    db: DEV_BRF_CORE_DB
+    ingest_wh: GENERAL_INGEST_WH
+    transform_wh: GENERAL_TRANSFORM_WH
+    reporting_wh: BRF_REPORTING_WH
+    dev_wh: BRF_DEV_WH
+  configurations:
+    DEV:
+      db: DEV_BRF_CORE_DB
+    PROD:
+      db: PROD_BRF_CORE_DB

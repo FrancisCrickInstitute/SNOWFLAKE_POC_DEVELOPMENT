@@ -1,0 +1,13 @@
+-- ============================================================================
+-- HR Domain Update 01: PII Access Role Grants
+-- ============================================================================
+-- Grants PII access roles to functional roles for the HR domain.
+-- The roles themselves are created by the functional_roles DCM project.
+--
+-- PII_HR_FULL_ACCESS    — sees all PII unmasked (granted to DATASTEWARD)
+-- PII_HR_PARTIAL_ACCESS — sees partial masking (granted to MANAGER)
+-- ============================================================================
+
+-- These grants are handled by functional_roles DCM project.
+-- This file is kept as documentation of the PII access model.
+-- No additional grants needed here.

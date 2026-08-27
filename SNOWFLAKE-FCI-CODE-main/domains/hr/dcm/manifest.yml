@@ -1,0 +1,32 @@
+manifest_version: 2
+default_target: DEV
+
+
+type: DCM_PROJECT
+
+
+targets:
+  DEV:
+    account_identifier: SFPSCOGS-FCRICKDEMO
+    project_name: DEV_HR_CORE_DB.DCM.HR_CORE_PROJECT
+    project_owner: DEV_HR_ETL
+    templating_config: DEV
+
+  PROD:
+    account_identifier: sfpscogs-azure_demo_3
+    project_name: PROD_HR_CORE_DB.DCM.HR_CORE_PROJECT
+    project_owner: PROD_HR_ETL
+    templating_config: PROD
+
+templating:
+  defaults:
+    db: DEV_HR_CORE_DB
+    ingest_wh: GENERAL_INGEST_WH
+    transform_wh: GENERAL_TRANSFORM_WH
+    reporting_wh: HR_REPORTING_WH
+    dev_wh: HR_DEV_WH
+  configurations:
+    DEV:
+      db: DEV_HR_CORE_DB
+    PROD:
+      db: PROD_HR_CORE_DB

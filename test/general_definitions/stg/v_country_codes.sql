@@ -1,0 +1,24 @@
+DEFINE VIEW {{db}}.STG.V_COUNTRY_CODES(
+    COUNTRY_CODE_ISO2,
+    COUNTRY_CODE_ISO3,
+    COUNTRY_NAME,
+    CONTINENT,
+    REGION,
+    SUB_REGION,
+    CURRENCY_CODE,
+    CURRENCY_NAME,
+    IS_ACTIVE
+) as
+select
+    COUNTRY_CODE_ISO2,
+    COUNTRY_CODE_ISO3,
+    COUNTRY_NAME,
+    CONTINENT,
+    REGION,
+    SUB_REGION,
+    CURRENCY_CODE,
+    CURRENCY_NAME,
+    ACTIVE_FLAG as IS_ACTIVE
+from {{db}}.RAW.COUNTRY_CODES_RAW
+where ACTIVE_FLAG = true
+qualify row_number() over (partition by COUNTRY_CODE_ISO2 order by LOAD_TS desc) = 1;

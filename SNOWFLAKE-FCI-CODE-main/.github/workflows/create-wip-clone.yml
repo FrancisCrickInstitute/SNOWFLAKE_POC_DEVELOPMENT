@@ -1,0 +1,65 @@
+name: Create WIP Clone
+
+on:
+  create:
+    # Triggered when a branch is pushed to remote for the first time
+
+jobs:
+  create-wip-clone:
+    if: startsWith(github.ref_name, 'feature/')
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SnowCLI
+        run: pip install snowflake-cli-labs
+
+      - name: Parse branch name
+        id: parse
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          # Extract issue ID: feature/<id>-...
+          ISSUE_ID=$(echo "$BRANCH" | sed -E 's|feature/([0-9]+)-.*|\1|')
+          # Extract domain: feature/<id>-<action>-<domain>-... or feature/<id>-<domain>-...
+          # Try common patterns: deploy-hr, hr-pii, hr-core, etc.
+          BRANCH_LOWER=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]')
+          DOMAIN=""
+          for DOMAIN_DIR in domains/*/; do
+            D=$(basename "$DOMAIN_DIR")
+            if echo "$BRANCH_LOWER" | grep -q "$D"; then
+              DOMAIN=$(echo "$D" | tr '[:lower:]' '[:upper:]')
+              break
+            fi
+          done
+          if [[ -z "$DOMAIN" ]]; then
+            echo "::warning::Could not detect domain from branch name: $BRANCH"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "issue_id=$ISSUE_ID" >> "$GITHUB_OUTPUT"
+            echo "domain=$DOMAIN" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Write private key
+        if: steps.parse.outputs.skip == 'false'
+        run: |
+          echo "${{ secrets.DEV_PRIVATE_KEY }}" > /tmp/snowflake_key.p8
+          chmod 600 /tmp/snowflake_key.p8
+
+      - name: Create WIP clone
+        if: steps.parse.outputs.skip == 'false'
+        run: |
+          DOMAIN="${{ steps.parse.outputs.domain }}"
+          ISSUE_ID="${{ steps.parse.outputs.issue_id }}"
+          snow sql -q "CALL ADMIN_DB.DEPLOY.DEPLOY_CLONE('${ISSUE_ID}', 'DEV', '${DOMAIN}', 'CORE', 'WIP');" \
+            --temporary-connection \
+            --account "${{ secrets.DEV_ACCOUNT }}" \
+            --user "${{ secrets.DEV_USER }}" \
+            --authenticator SNOWFLAKE_JWT \
+            --private-key-path /tmp/snowflake_key.p8 \
+            --role "DEV_${DOMAIN}_SYSADMIN" \
+            --warehouse "${DOMAIN}_TRANSFORM_WH"
+
+      - name: Clean up key
+        if: always()
+        run: rm -f /tmp/snowflake_key.p8

@@ -1,0 +1,18 @@
+DEFINE VIEW {{db}}.STG.V_CURRENCY_RATES_LATEST(
+    RATE_DATE,
+    BASE_CURRENCY,
+    TARGET_CURRENCY,
+    EXCHANGE_RATE,
+    SOURCE_SYSTEM
+) as
+select
+    RATE_DATE,
+    BASE_CURRENCY,
+    TARGET_CURRENCY,
+    EXCHANGE_RATE,
+    SOURCE_SYSTEM
+from {{db}}.RAW.CURRENCY_RATES_RAW
+qualify row_number() over (
+    partition by RATE_DATE, BASE_CURRENCY, TARGET_CURRENCY
+    order by LOAD_TS desc, RAW_SK desc
+) = 1;

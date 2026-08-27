@@ -1,0 +1,26 @@
+DEFINE VIEW {{db}}.STG.V_EMPLOYEE_JOB_EVENTS(
+    EMPLOYEE_ID,
+    EFFECTIVE_DATE,
+    JOB_ID,
+    DEPARTMENT_ID,
+    MANAGER_EMPLOYEE_ID,
+    LOCATION_CODE,
+    EVENT_TYPE,
+    SRC_UPDATED_AT,
+    LOAD_TS
+) as
+select
+    EMPLOYEE_ID,
+    EFFECTIVE_DATE,
+    JOB_ID,
+    DEPARTMENT_ID,
+    MANAGER_EMPLOYEE_ID,
+    upper(LOCATION_CODE) as LOCATION_CODE,
+    upper(EVENT_TYPE) as EVENT_TYPE,
+    SRC_UPDATED_AT,
+    LOAD_TS
+from {{db}}.RAW.EMPLOYEE_JOB_EVENTS_RAW
+qualify row_number() over (
+    partition by EMPLOYEE_ID, EFFECTIVE_DATE
+    order by SRC_UPDATED_AT desc, LOAD_TS desc, RAW_ROW_ID desc
+) = 1;

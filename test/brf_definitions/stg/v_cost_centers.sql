@@ -1,0 +1,19 @@
+DEFINE VIEW {{db}}.STG.V_COST_CENTERS(
+    COST_CENTER_ID,
+    COST_CENTER_NAME,
+    DEPARTMENT_CODE,
+    DIVISION,
+    MANAGER_NAME,
+    BUDGET_OWNER,
+    IS_ACTIVE
+) as
+select
+    COST_CENTER_ID,
+    COST_CENTER_NAME,
+    DEPARTMENT_CODE,
+    DIVISION,
+    MANAGER_NAME,
+    BUDGET_OWNER,
+    ACTIVE_FLAG as IS_ACTIVE
+from {{db}}.RAW.COST_CENTERS_RAW
+qualify row_number() over (partition by COST_CENTER_ID order by LOAD_TS desc, RAW_SK desc) = 1;

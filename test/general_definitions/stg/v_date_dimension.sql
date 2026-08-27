@@ -1,0 +1,39 @@
+DEFINE VIEW {{db}}.STG.V_DATE_DIMENSION(
+    DATE_KEY,
+    FULL_DATE,
+    DAY_OF_WEEK,
+    DAY_NAME,
+    DAY_OF_MONTH,
+    DAY_OF_YEAR,
+    WEEK_OF_YEAR,
+    MONTH_NUMBER,
+    MONTH_NAME,
+    QUARTER_NUMBER,
+    QUARTER_NAME,
+    YEAR_NUMBER,
+    FISCAL_YEAR,
+    FISCAL_QUARTER,
+    IS_WEEKEND,
+    IS_HOLIDAY,
+    HOLIDAY_NAME
+) as
+select
+    DATE_KEY,
+    FULL_DATE,
+    DAY_OF_WEEK,
+    DAY_NAME,
+    DAY_OF_MONTH,
+    DAY_OF_YEAR,
+    WEEK_OF_YEAR,
+    MONTH_NUMBER,
+    MONTH_NAME,
+    QUARTER_NUMBER,
+    QUARTER_NAME,
+    YEAR_NUMBER,
+    FISCAL_YEAR,
+    FISCAL_QUARTER,
+    IS_WEEKEND,
+    IS_HOLIDAY,
+    HOLIDAY_NAME
+from {{db}}.RAW.DATE_DIMENSION_RAW
+qualify row_number() over (partition by DATE_KEY order by LOAD_TS desc) = 1;

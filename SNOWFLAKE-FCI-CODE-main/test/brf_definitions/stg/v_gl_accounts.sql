@@ -1,0 +1,19 @@
+DEFINE VIEW {{db}}.STG.V_GL_ACCOUNTS(
+    ACCOUNT_ID,
+    ACCOUNT_NAME,
+    ACCOUNT_TYPE,
+    ACCOUNT_CATEGORY,
+    PARENT_ACCOUNT_ID,
+    NORMAL_BALANCE,
+    IS_ACTIVE
+) as
+select
+    ACCOUNT_ID,
+    ACCOUNT_NAME,
+    ACCOUNT_TYPE,
+    ACCOUNT_CATEGORY,
+    PARENT_ACCOUNT_ID,
+    NORMAL_BALANCE,
+    ACTIVE_FLAG as IS_ACTIVE
+from {{db}}.RAW.GL_ACCOUNTS_RAW
+qualify row_number() over (partition by ACCOUNT_ID order by LOAD_TS desc, RAW_SK desc) = 1;

@@ -1,0 +1,34 @@
+manifest_version: 2
+type: DCM_PROJECT
+default_target: DEV
+
+targets:
+  DEV:
+    account_identifier: SFPSCOGS-FCRICKDEMO
+    project_name: ADMIN_DB.DCM.FUNCTIONAL_ROLES
+    project_owner: DEPLOYMENT_ADMIN
+    templating_config: DEV
+
+  PROD:
+    account_identifier: sfpscogs-azure_demo_3
+    project_name: ADMIN_DB.DCM.FUNCTIONAL_ROLES
+    project_owner: DEPLOYMENT_ADMIN
+    templating_config: PROD
+
+templating:
+  defaults:
+    domains:
+      - name: HR
+        reporting_wh: HR_REPORTING_WH
+        dev_wh: HR_DEV_WH
+      - name: BRF
+        reporting_wh: BRF_REPORTING_WH
+        dev_wh: BRF_DEV_WH
+      - name: GENERAL
+        reporting_wh: GENERAL_REPORTING_WH
+        dev_wh: GENERAL_TRANSFORM_WH
+  configurations:
+    DEV:
+      env: DEV
+    PROD:
+      env: PROD

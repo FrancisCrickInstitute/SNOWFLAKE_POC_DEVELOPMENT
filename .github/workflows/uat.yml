@@ -1,0 +1,53 @@
+name: Deploy to UAT
+
+on:
+  pull_request:
+    branches:
+      - 'uat/**'
+    types: [closed]
+
+jobs:
+  detect-changes:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    outputs:
+      domains: ${{ steps.changes.outputs.domains }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: changes
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+          DOMAINS="[]"
+          for DOMAIN_DIR in domains/*/; do
+            DOMAIN_LOWER=$(basename "$DOMAIN_DIR")
+            DOMAIN_UPPER=$(echo "$DOMAIN_LOWER" | tr '[:lower:]' '[:upper:]')
+            if echo "$CHANGED" | grep -q "^domains/${DOMAIN_LOWER}/"; then
+              DOMAINS=$(echo "$DOMAINS" | jq -c ". + [\"${DOMAIN_UPPER}\"]")
+            fi
+          done
+          echo "domains=$DOMAINS" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.domains != '[]'
+    strategy:
+      matrix:
+        domain: ${{ fromJSON(needs.detect-changes.outputs.domains) }}
+      max-parallel: 1
+    uses: sfc-gh-pfaulkner/snowflake-rbac-framework/.github/workflows/deploy-to-clone.yml@main
+    with:
+      clone_type: UAT
+      environment: PROD
+      domain: ${{ matrix.domain }}
+      db_name: CORE
+      dcm_target: PROD
+      role: PROD_${{ matrix.domain }}_SYSADMIN
+      warehouse: ${{ matrix.domain }}_TRANSFORM_WH
+    secrets:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.PROD_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.PROD_USER }}
+      SNOWFLAKE_PRIVATE_KEY: ${{ secrets.PROD_PRIVATE_KEY }}
