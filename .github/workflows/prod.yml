@@ -42,7 +42,7 @@ jobs:
       matrix:
         domain: ${{ fromJSON(needs.detect-changes.outputs.domains) }}
       max-parallel: 1
-    uses: sfc-gh-pfaulkner/snowflake-rbac-framework/.github/workflows/deploy-to-prod.yml@main
+    uses: FrancisCrickInstitute/SNOWFLAKE_POC_RBAC/.github/workflows/deploy-to-prod.yml@main
     with:
       domain: ${{ matrix.domain }}
       db_name: CORE
