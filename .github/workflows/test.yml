@@ -20,7 +20,7 @@ jobs:
         run: |
           BASE="${{ github.event.pull_request.base.sha }}"
           HEAD="${{ github.event.pull_request.head.sha }}"
-          CHANGED=$(git diff --name-only "$BASE" "$HEAD")
+          CHANGED=$(git diff --name-only "$BASE"..."$HEAD")
           DOMAINS="[]"
           for DOMAIN_DIR in domains/*/; do
             DOMAIN_LOWER=$(basename "$DOMAIN_DIR")
