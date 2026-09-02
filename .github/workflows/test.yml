@@ -38,7 +38,7 @@ jobs:
       matrix:
         domain: ${{ fromJSON(needs.detect-changes.outputs.domains) }}
       max-parallel: 1
-    uses: sfc-gh-pfaulkner/snowflake-rbac-framework/.github/workflows/deploy-to-clone.yml@main
+    uses: FrancisCrickInstitute/SNOWFLAKE_POC_RBAC/.github/workflows/deploy-to-clone.yml@main
     with:
       clone_type: TEST
       environment: DEV
