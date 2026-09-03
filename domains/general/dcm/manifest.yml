@@ -6,13 +6,13 @@ default_target: DEV
 
 targets:
   DEV:
-    account_identifier: SFPSCOGS-FCRICKDEMO
+    account_identifier: WJLJPIH-CDW_DEV
     project_name: DEV_GENERAL_CORE_DB.DCM.GENERAL_CORE_PROJECT
     project_owner: DEV_GENERAL_ETL
     templating_config: DEV
 
   PROD:
-    account_identifier: sfpscogs-azure_demo_3
+    account_identifier: WJLJPIH-CDW_PROD6
     project_name: PROD_GENERAL_CORE_DB.DCM.GENERAL_CORE_PROJECT
     project_owner: PROD_GENERAL_ETL
     templating_config: PROD
