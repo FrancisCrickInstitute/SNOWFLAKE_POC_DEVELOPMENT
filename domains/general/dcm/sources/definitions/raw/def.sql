@@ -1,4 +1,4 @@
-DEFINE TABLE {{db}}.RAW.DCM_TABLE (
+DEFINE TABLE {{db}}RAW.DCM_TABLE (
     id NUMBER,
     name VARCHAR(100),
     email VARCHAR(255),
