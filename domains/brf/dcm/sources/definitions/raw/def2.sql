@@ -4,5 +4,6 @@ DEFINE TABLE {{db}}.RAW.DCM_TABLE_POSTFIX (
     email VARCHAR(255),
     new NUMBER,
     created_at TIMESTAMP_NTZ,
-    newcol NUMBER   
+    newcol NUMBER,
+    newcol2 NUMBER   
 );
