@@ -1,0 +1,31 @@
+DEFINE STAGE {{db}}.RAW.LIS_STAGE
+    STORAGE_INTEGRATION = azure_blob_integration
+    URL = 'azure://dmapstorage.blob.core.windows.net/snowflake-storage-integration/'
+    FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1);
+
+DEFINE FILE FORMAT {{db}}.RAW.SCOPUS_JSON_FF
+    TYPE = 'JSON'
+    STRIP_OUTER_ARRAY = FALSE
+    COMMENT = 'JSON format for Scopus API response envelopes';
+
+DEFINE TABLE {{db}}.RAW.RAW_SCOPUS (
+    RAW VARIANT NOT NULL,
+    FILENAME VARCHAR NOT NULL,
+    FILE_ROW_NUMBER INTEGER NOT NULL,
+    LOADED_AT TIMESTAMP_NTZ DEFAULT CURRENT_TIMESTAMP()
+)
+CHANGE_TRACKING = TRUE;
+
+DEFINE PIPE {{db}}.RAW.SCOPUS_PIPE
+    AUTO_INGEST = FALSE
+    COMMENT = 'Manually-triggered pipe to load Scopus JSON into RAW_SCOPUS'
+AS
+    COPY INTO {{db}}.RAW.RAW_SCOPUS (RAW, FILENAME, FILE_ROW_NUMBER)
+    FROM (
+        SELECT
+            $1,
+            METADATA$FILENAME,
+            METADATA$FILE_ROW_NUMBER
+        FROM @{{db}}.RAW.LIS_STAGE
+    )
+    FILE_FORMAT = (FORMAT_NAME = '{{db}}.RAW.SCOPUS_JSON_FF');
