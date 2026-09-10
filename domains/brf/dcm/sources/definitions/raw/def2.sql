@@ -5,5 +5,6 @@ DEFINE TABLE {{db}}.RAW.DCM_TABLE_POSTFIX (
     new NUMBER,
     created_at TIMESTAMP_NTZ,
     newcol NUMBER,
-    newcol2 NUMBER   
+    newcol2 NUMBER,
+    CELLY VARCHAR   
 );
