@@ -1,7 +1,4 @@
-DEFINE STAGE {{db}}.RAW.LIS_STAGE
-    STORAGE_INTEGRATION = azure_blob_integration
-    URL = 'azure://dmapstorage.blob.core.windows.net/snowflake-storage-integration/'
-    FILE_FORMAT = (TYPE = 'CSV' FIELD_OPTIONALLY_ENCLOSED_BY = '"' SKIP_HEADER = 1);
+
 
 DEFINE FILE FORMAT {{db}}.RAW.SCOPUS_JSON_FF
     TYPE = 'JSON'
